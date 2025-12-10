@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Usman Apk Hub — Sliding Glass Sidebar Store</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{
+  --bg: #f4f6fb;
+  --panel: rgba(255,255,255,0.7);
+  --panel-border: rgba(0,0,0,0.06);
+  --card: #ffffff;
+  --muted: #6b7280;
+  --text: #0f1724;
+  --accent-from: #4f9cff;
+  --accent-to: #7b61ff;
+  --glass-blur: 10px;
+  --shadow: 0 10px 40px rgba(6,12,34,0.06);
+  --sidebar-width: 280px;
+  --transition-fast: .22s;
+  --transition-mid: .32s;
+}
+body.dark{
+  --bg: #071018;
+  --panel: rgba(11,18,32,0.62);
+  --panel-border: rgba(255,255,255,0.04);
+  --card: #0f1a26;
+  --muted: #9aa4b2;
+  --text: #e6eef6;
+  --glass-blur: 8px;
+  --shadow: 0 14px 50px rgba(2,6,23,0.6);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);transition:background var(--transition-mid), color var(--transition-mid);}
+.app-wrap{display:flex;min-height:100vh;overflow-x:hidden;padding-top:72px;} 
+
+header.topbar{position:fixed; top:0; left:0; right:0; height:72px; display:flex; align-items:center; gap:12px;padding:0 18px; background:transparent; z-index:100;}
+.top-left{display:flex;align-items:center;gap:12px}
+.hambtn{width:46px;height:46px;border-radius:10px;border:0;background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow);transition:transform var(--transition-fast)}
+.hambtn:active{transform:scale(.98)}
+.brand{font-weight:800;font-size:18px;display:flex;gap:8px;align-items:center;background:linear-gradient(90deg,var(--accent-from),var(--accent-to));padding:8px 12px;border-radius:12px;color:white;box-shadow:var(--shadow);}
+.brand i{background:rgba(255,255,255,0.2);padding:6px;border-radius:8px;color:white}
+
+.btn{padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent-from),var(--accent-to));cursor:pointer;display:inline-flex;align-items:center;gap:8px;color:white;font-weight:800;box-shadow:var(--shadow);transition:transform var(--transition-fast)}
+.btn:active{transform:scale(.98)}
+.theme-btn{padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent-from),var(--accent-to));color:white;border:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:transform var(--transition-fast);}
+.theme-btn i{font-size:18px;}
+.theme-btn:active{transform:scale(.98);}
+
+.sidebar-drawer{position:fixed;left:20px;top:86px;width:var(--sidebar-width);max-width:calc(100% - 40px);height:calc(100vh - 106px);border-radius:14px;padding:16px;background:var(--panel);backdrop-filter: blur(var(--glass-blur));border:1px solid var(--panel-border);box-shadow:var(--shadow);transform:translateX(-140%);transition:transform var(--transition-mid);z-index:90;overflow:auto}
+.sidebar-drawer.open{transform:translateX(0)}
+.sidebar-drawer .brand-small{display:flex;align-items:center;gap:10px;font-weight:800;margin-bottom:10px}
+.sidebar-drawer .nav a{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;color:var(--text);font-weight:700}
+.sidebar-drawer .nav a:hover{background:rgba(0,0,0,0.03)}
+.sidebar-drawer .nav a.active{background:linear-gradient(90deg,#eef6ff,#f3ecff);border:1px solid rgba(0,0,0,0.03)}
+.sidebar-drawer .small{font-size:13px;color:var(--muted);margin-top:8px}
+.sidebar-categories{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.sidebar-categories a{padding:8px 12px;border-radius:10px;background:linear-gradient(135deg,#fff,#f0f0f0);text-decoration:none;color:var(--text);font-weight:700;text-align:center;display:block;}
+.sidebar-categories a.active{background:linear-gradient(90deg,var(--accent-from),var(--accent-to));color:white;}
+
+main.main{flex:1;padding:20px 28px 60px 28px; margin-left:0; transition:margin var(--transition-mid); z-index:1}
+
+.latest-segment {background: var(--card);border-radius:16px;padding:20px 24px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px;margin-bottom:18px;z-index:1;}
+.latest-segment-top {display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.pill-search{display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:999px;background:var(--card);border:1px solid var(--panel-border);box-shadow:0 6px 18px rgba(0,0,0,0.08);width:100%;max-width:480px;}
+.pill-search input{border:none;background:transparent;outline:none;width:100%;font-size:15px;color:var(--text);}
+.pill-search input:focus + i,.pill-search:focus-within i{color:var(--accent-from);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:18px;}
+.card{background:var(--card);border-radius:12px;overflow:hidden;border:1px solid var(--panel-border);box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s}
+.card:hover{transform:translateY(-6px)}
+.card-top{display:flex;gap:12px;padding:14px;align-items:center}
+.icon{width:72px;height:72px;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,0.04);flex-shrink:0;background:linear-gradient(180deg,#f0f2f6,#ffffff)}
+.icon img{width:100%;height:100%;object-fit:cover;display:block}
+.meta{flex:1}
+.badges{display:flex;gap:8px;margin-bottom:6px}
+.badge{padding:6px 8px;border-radius:999px;font-weight:700;font-size:12px;color:#fff}
+.badge.new{background:linear-gradient(90deg,#2dbb6a,#19a14a)}
+.badge.mod{background:linear-gradient(90deg,#ff6b6b,#ff3b6b)}
+.title{font-weight:800;font-size:16px}
+.subtitle{color:var(--muted);font-size:13px;margin-top:6px}
+.card-bottom{display:flex;align-items:center;justify-content:space-between;padding:12px;border-top:1px solid var(--panel-border);background:rgba(0,0,0,0.01)}
+.download-btn{padding:10px 14px;border-radius:10px;border:0;color:white;background:linear-gradient(90deg,var(--accent-from),var(--accent-to));font-weight:800;cursor:pointer}
+
+.footer{margin-top:20px;color:var(--muted);text-align:center;font-size:13px}
+.sticky-footer{position: fixed;bottom: 0;left: 0;right: 0;background: var(--card);border-top: 1px solid var(--panel-border);text-align: center;padding: 12px 0;font-weight: 700;z-index: 200;box-shadow: 0 -4px 20px rgba(0,0,0,0.06);}
+.sticky-footer a{color: var(--text);text-decoration:none}
+
+.key-feedback{margin-top:8px;color:red;font-size:14px;}
+.key-feedback.success{color:green;}
+</style>
+</head>
+<body class="light">
+
+<div class="app-wrap">
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="top-left">
+      <button class="hambtn" id="hambtn"><i class="fa fa-bars"></i></button>
+      <div class="brand"><i class="fa-brands fa-android"></i> Usman Hacking App Hub </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar-drawer" id="sidebarDrawer">
+    <div class="brand-small"><i class="fa-brands fa-android"></i><strong>Usman Hacking App Hub</strong></div>
+    <div class="small">Navigate</div>
+    <nav class="nav" id="nav">
+      <a href="#" data-cat="" class="active"><i class="fa fa-house"></i> Home</a>
+      <a href="#" data-cat="App"><i class="fa fa-mobile-screen"></i> Apps</a>
+      <a href="#" data-cat="Mod"><i class="fa fa-gem"></i> Mods</a>
+      <a href="#" data-cat="Hack"><i class="fa fa-bolt"></i> Hacks</a>
+    </nav>
+    <div class="sidebar-categories">
+      <a href="#" data-cat="" class="active">Home</a>
+      <a href="#" data-cat="App">Apps</a>
+      <a href="#" data-cat="Mod">Mods</a>
+      <a href="#" data-cat="Hack">Hack</a>
+    </div>
+    <div style="margin-top:18px;border-top:1px solid var(--panel-border);padding-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="small">Theme</div>
+        <button id="sidebarThemeBtn" class="theme-btn"><i id="sidebarIcon" class="fa fa-moon"></i></button>
+      </div>
+      <div style="height:10px"></div>
+      <div class="small">Contact</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+        <a class="btn" href="https://wa.me/+93776544491?text=Hey%20Usman..I%20want%20to%20buy%20hacking%20Apks%20Key%20%F0%9F%97%9D%EF%B8%8F..!%3F" target="_blank"><i class="fa fa-paper-plane"></i> Contact Owner</a>
+        <a class="btn" href="https://whatsapp.com/channel/0029Vb6SwB147XeCTHpikc0O" target="_blank"><i class="fa fa-users"></i> Join Whatsapp Channel</a>
+      </div>
+      <div class="footer">© Powered By Usman With 💗 Love</div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="latest-segment">
+      <div class="latest-segment-top">
+        <div>
+          <h1 style="margin:0">Latest Hacking Apps</h1>
+          <div class="muted">Here's the most dangerous tools to hack social media accounts</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="themeToggleTop" class="theme-btn"><i id="themeIconTop" class="fa fa-moon"></i></button>
+          <button id="downloadSelected" class="btn download-selected"><i class="fa fa-download"></i> Download Selected</button>
+        </div>
+      </div>
+      <div>
+        <div class="searchbar pill-search">
+          <i class="fa fa-search muted"></i>
+          <input id="searchInput" placeholder="Search apps, e.g. WhatsApp" />
+        </div>
+      </div>
+    </div>
+    <div id="grid" class="grid"></div>
+  </main>
+</div>
+
+<!-- Key Modal -->
+<div id="overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:999;">
+  <div class="modal" role="dialog" aria-modal="true" style="background:var(--card);padding:20px;border-radius:12px;max-width:400px;width:90%;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3>Enter Download Key</h3>
+      <button class="btn" onclick="closeOverlay()" style="padding:6px 10px;border:0;border-radius:8px;background:#ccc;"><i class="fa fa-times"></i></button>
+    </div>
+    <input id="userKey" placeholder="Enter key (Purchased Key)" style="width:100%;padding:10px;margin-bottom:6px;border:1px solid var(--panel-border);border-radius:8px;">
+    <div class="key-feedback" id="keyFeedback"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-start; margin-left:4px;">
+      <button id="verifyKey" class="btn" style="background:linear-gradient(90deg,var(--accent-from),var(--accent-to));color:white;border:0;padding:10px 14px;border-radius:10px;">Verify & Download</button>
+      <button onclick="window.open('https://wa.me/+93776544491?text=Hey%20Usman..I%20want%20to%20buy%20hacking%20Apks%20Key%20%F0%9F%97%9D%EF%B8%8F..!%3F','_blank')" class="btn" style="border:1px solid var(--panel-border);padding:10px 14px;border-radius:10px;"><i class="fa fa-shopping-cart"></i> Purchase Key</button>
+    </div>
+    <div style="margin-top:12px;color:var(--muted);font-size:13px">If you don't have a key, click Purchase Key to message on WhatsApp.</div>
+  </div>
+</div>
+
+<div class="sticky-footer">
+  <a href="https://whatsapp.com/channel/0029Vb6SwB147XeCTHpikc0O" target="_blank">
+    © Powered By Usman With 💗 Love
+  </a>
+</div>
+
+<script>
+// Apps array
+const apps = [
+  { id: "app1", title: "WhatsApp Hack", category: "App", version: "1.0", size: "50 MB", is_new: true, is_mod: true, icon: "https://i.ibb.co/b5qjwDDD/86372.jpg", apk_link: "https://www.mediafire.com/file/8eqvtqfki06gdpo/WhatsApp_Hack.apk/file" },
+  { id: "app2", title: "TikTok Hack", category: "App", version: "2.5", size: "45 MB", is_new: true, is_mod: true, icon: "https://i.ibb.co/FkNpMdWd/86316.jpg", apk_link: "https://www.example.com/tiktok.apk" }
+];
+
+// Selected apps
+let selectedCheckboxes = new Set();
+let selectedDownloadId = null;
+
+// Helpers
+function $all(sel){ return Array.from(document.querySelectorAll(sel)); }
+function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+// Render grid
+function renderGrid(filter=''){
+  const q = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+  const grid = document.getElementById('grid'); grid.innerHTML = '';
+  const list = apps.filter(a=>{
+    if(filter && a.category !== filter) return false;
+    if(!q) return true;
+    return (a.title + ' ' + (a.description||'')).toLowerCase().includes(q);
+  });
+  if(list.length === 0){ grid.innerHTML = '<div style="padding:24px;color:var(--muted)">No apps found.</div>'; return; }
+  list.forEach(app=>{
+    const card = document.createElement('div'); card.className = 'card';
+    card.innerHTML = `
+      <div class="card-top">
+        <input type="checkbox" class="chk" data-id="${escapeHtml(app.id)}" style="margin-right:10px">
+        <div class="icon"><img src="${escapeHtml(app.icon)}" alt="${escapeHtml(app.title)}"></div>
+        <div class="meta">
+          <div class="badges">
+            ${app.is_new ? '<span class="badge new"><i class="fa fa-star"></i> NEW</span>' : ''}
+${app.is_mod ? '<span class="badge mod"><i class="fa fa-gem"></i> MOD</span>' : ''}
+          </div>
+          <div class="title">${escapeHtml(app.title)}</div>
+          <div class="subtitle">${escapeHtml(app.category ||'Misc')} • ${escapeHtml(app.version || '')}</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="meta-left"><span><i class="fa fa-info-circle"></i> ${escapeHtml(app.version)}</span><span>• ${escapeHtml(app.size)}</span></div>
+        <div>
+          <button class="download-btn" data-id="${escapeHtml(app.id)}"><i class="fa fa-download"></i> Download</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Download buttons
+  $all('.download-btn').forEach(btn=>{
+    btn.onclick = () => openKeyModal(btn.dataset.id);
+  });
+
+  // Checkboxes
+  $all('.chk').forEach(chk=>{
+    chk.onchange = () => {
+      const id = chk.dataset.id;
+      if(chk.checked) selectedCheckboxes.add(id); else selectedCheckboxes.delete(id);
+    }
+  });
+}
+
+// Sidebar filter
+document.querySelectorAll('.sidebar-categories a').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    const cat = a.dataset.cat || '';
+    document.querySelectorAll('.sidebar-categories a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    renderGrid(cat);
+  });
+});
+
+// Sidebar toggle
+const sidebar = document.getElementById('sidebarDrawer');
+document.getElementById('hambtn').addEventListener('click', ()=> { sidebar.classList.toggle('open'); });
+function closeSidebar(){ sidebar.classList.remove('open'); }
+
+// Key modal
+function openKeyModal(appId){
+  selectedDownloadId = appId;
+  document.getElementById('userKey').value = '';
+  const feedback = document.getElementById('keyFeedback');
+  feedback.textContent = '';
+  feedback.className = 'key-feedback';
+  document.getElementById('overlay').style.display = 'flex';
+}
+function closeOverlay(){ document.getElementById('overlay').style.display = 'none'; }
+
+// Verify & download using backend
+async function verifyKeyBackend(key){
+  try{
+    const res = await fetch('https://usman-key-backend.vercel.app/verify?key=' + encodeURIComponent(key));
+    const data = await res.json();
+    return data.valid;
+  }catch(e){ return false; }
+}
+
+document.getElementById('verifyKey').addEventListener('click', async ()=>{
+  const key = document.getElementById('userKey').value.trim();
+  const feedback = document.getElementById('keyFeedback');
+  feedback.textContent = 'Verifying...';
+  feedback.className = 'key-feedback';
+  const valid = await verifyKeyBackend(key);
+  if(valid){
+    const app = apps.find(a => a.id === selectedDownloadId);
+    if(app && app.apk_link){
+      feedback.textContent = 'Key valid! Starting download...';
+      feedback.className = 'key-feedback success';
+      window.location.href = app.apk_link;
+      closeOverlay();
+    }
+  }else{
+    feedback.textContent = 'Invalid or already used key!';
+    feedback.className = 'key-feedback';
+  }
+});
+
+// Download selected apps
+document.getElementById('downloadSelected').addEventListener('click', async ()=>{
+  if(selectedCheckboxes.size===0){ alert('Select at least one app.'); return; }
+  const key = prompt('Enter download key for selected apps:');
+  if(!key) return;
+  const valid = await verifyKeyBackend(key);
+  if(!valid){ alert('Invalid or already used key!'); return; }
+  selectedCheckboxes.forEach(id => {
+    const app = apps.find(a => a.id === id);
+    if(app && app.apk_link) window.open(app.apk_link, '_blank');
+  });
+});
+
+// Theme toggle
+function setTheme(dark){
+  if(dark){
+    document.body.classList.add('dark');
+    document.getElementById('themeIconTop').className = 'fa fa-sun';
+    document.getElementById('sidebarIcon').className = 'fa fa-sun';
+  } else {
+    document.body.classList.remove('dark');
+    document.getElementById('themeIconTop').className = 'fa fa-moon';
+    document.getElementById('sidebarIcon').className = 'fa fa-moon';
+  }
+}
+document.getElementById('themeToggleTop').addEventListener('click', ()=> setTheme(!document.body.classList.contains('dark')));
+document.getElementById('sidebarThemeBtn').addEventListener('click', ()=> setTheme(!document.body.classList.contains('dark')));
+
+// Navigation links
+document.querySelectorAll('#nav a').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    const cat = a.dataset.cat || '';
+    document.querySelectorAll('#nav a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    renderGrid(cat);
+    if(window.innerWidth < 980) closeSidebar();
+  });
+});
+
+// Search input
+document.getElementById('searchInput').addEventListener('input', () => renderGrid());
+
+// Initial setup
+renderGrid();
+</script>
+</body>
+</html>
