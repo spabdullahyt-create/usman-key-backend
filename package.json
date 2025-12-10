@@ -1,14 +1,26 @@
 {
   "name": "usman-key-backend",
   "version": "1.0.0",
-  "main": "api/index.js",
+  "description": "Backend for Usman APK Hub with one-time keys",
+  "main": "index.js",
   "scripts": {
-    "start": "node api/index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
+  "keywords": [
+    "express",
+    "mongodb",
+    "one-time-key",
+    "apk"
+  ],
+  "author": "Usman Athar",
+  "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^7.7.0",
     "cors": "^2.8.5",
-    "body-parser": "^1.20.2"
+    "express": "^4.18.2",
+    "mongodb": "^5.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
