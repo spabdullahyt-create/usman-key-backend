@@ -6,24 +6,21 @@ const path = require('path');
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-// Serve frontend files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); // serve frontend
 
 // MongoDB connection
 const uri = "mongodb+srv://usmanathar009_db_user:rsHFV8FdgstM7wyF@usman-key-cluster.zgspjho.mongodb.net/apk_hub?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 let keysCollection;
 
-// Connect to MongoDB
 async function connectDB() {
   try {
     await client.connect();
     const db = client.db("apk_hub");
     keysCollection = db.collection("keys");
-    console.log("Connected to MongoDB successfully");
+    console.log("Connected to MongoDB");
   } catch (err) {
-    console.error("MongoDB connection error:", err);
+    console.error(err);
   }
 }
 connectDB();
@@ -40,10 +37,7 @@ app.get('/verify', async (req, res) => {
 
   try {
     const keyDoc = await keysCollection.findOne({ key });
-    if (!keyDoc) return res.json({ valid: false });
-    if (keyDoc.used) return res.json({ valid: false });
-
-    // Mark key as used
+    if (!keyDoc || keyDoc.used) return res.json({ valid: false });
     await keysCollection.updateOne({ key }, { $set: { used: true } });
     return res.json({ valid: true });
   } catch (err) {
@@ -52,10 +46,10 @@ app.get('/verify', async (req, res) => {
   }
 });
 
-// Generate new key (for admin/owner usage)
+// Generate new key (admin)
 app.post('/generate', async (req, res) => {
   const { key } = req.body;
-  if (!key) return res.status(400).json({ error: "Key is required" });
+  if (!key) return res.status(400).json({ error: "Key required" });
 
   try {
     await keysCollection.insertOne({ key, used: false });
@@ -66,6 +60,5 @@ app.post('/generate', async (req, res) => {
   }
 });
 
-// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
